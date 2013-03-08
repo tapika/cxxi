@@ -1530,7 +1530,7 @@ ParserResult^ Parser::Parse(const std::string& File)
     client->EndSourceFile();
 
     // Convert the diagnostics to the managed types
-    for(auto& Diag : DiagClient->Diagnostics)
+    for each (auto& Diag in DiagClient->Diagnostics)
     {
         using namespace clix;
 
