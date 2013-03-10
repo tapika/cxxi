@@ -62,13 +62,14 @@ namespace Cxxi.Generators.CLI
                 if (includeName == Path.GetFileNameWithoutExtension(((TextTemplate) this).unit.FileName))
                     continue;
 
-                includes.Add(includeName);
+                includes.Add(string.Format("#include \"{0}.h\"", includeName));
             }
 
+            foreach (var include in Includes)
+                includes.Add(include.ToString());
+
             foreach (var include in includes)
-            {
-                WriteLine("#include \"{0}.h\"", include);
-            }
+                WriteLine(include);
         }
 
         public void GenerateDeclarations()
@@ -526,15 +527,8 @@ namespace Cxxi.Generators.CLI
 
         public void GenerateFunctionParams(List<ParamMarshal> @params)
         {
-            for (var i = 0; i < @params.Count; ++i)
-            {
-                var param = @params[i];
-
-                Write(param.Name);
-
-                if (i < @params.Count - 1)
-                    Write(", ");
-            }
+            var names = @params.Select(param => param.Name).ToList();
+            Write(string.Join(", ", names));
         }
 
         public void GenerateDebug(Declaration decl)

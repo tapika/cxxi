@@ -15,6 +15,11 @@ namespace Cxxi
         QualifiedType QualifiedType { get; }
     }
 
+    public interface INamedDecl
+    {
+        string Name { get; set; }
+    }
+
     [Flags]
     public enum IgnoreFlags
     {
@@ -27,7 +32,7 @@ namespace Cxxi
     /// <summary>
     /// Represents a C++ declaration.
     /// </summary>
-    public abstract class Declaration
+    public abstract class Declaration : INamedDecl
     {
         // Namespace the declaration is contained in.
         public Namespace Namespace;
@@ -132,15 +137,19 @@ namespace Cxxi
         // Tracks the original declaration definition order.
         public uint DefinitionOrder;
 
+        // Passes that should not be run on this declaration.
+        public ISet<System.Type> ExcludeFromPasses;
+
         protected Declaration()
         {
             IgnoreFlags = IgnoreFlags.None;
+            ExcludeFromPasses = new HashSet<System.Type>();
         }
 
         protected Declaration(string name)
+            : this()
         {
             Name = name;
-            IgnoreFlags = IgnoreFlags.None;
         }
 
         public override string ToString()
