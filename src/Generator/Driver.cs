@@ -68,15 +68,19 @@ namespace Cxxi
                 Console.WriteLine("    {0}", diag.Message);
         }
 
-        public void ParseCode()
+        public bool ParseCode()
         {
             Console.WriteLine("Parsing code...");
 
             var parser = new Parser(Options);
             parser.HeaderParsed += OnHeaderParsed;
 
-            parser.ParseHeaders(Options.Headers);
+            if( !parser.ParseHeaders(Options.Headers) )
+                return false;
+            
             Library = parser.Library;
+
+            return true;
         }
 
         public void ProcessCode()
@@ -144,9 +148,12 @@ namespace Cxxi
 
             var driver = new Driver(options, library);
             driver.Setup();
-            driver.ParseCode();
-            driver.ProcessCode();
-            driver.GenerateCode();
+            
+            if (driver.ParseCode())
+            {
+                driver.ProcessCode();
+                driver.GenerateCode();
+            }
         }
     }
 
@@ -164,6 +171,7 @@ namespace Cxxi
         public bool Verbose = false;
         public bool ShowHelpText = false;
         public bool OutputDebug = false;
+        public bool IgnoreErrors = false;       // When set to true - compiler errors are ignored - and intermediate parsing results still can be used.
         public string OutputNamespace;
         public string OutputDir;
         public string LibraryName;
